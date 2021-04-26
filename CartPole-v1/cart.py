@@ -21,6 +21,8 @@ for i_episode in range(10000):
         # remember for after epoch learning
         agent.remember(state_old, action, reward, state_new, done)
 
+        state_old = state_new
+
         if done:
             print("Episode finished after {} timesteps".format(t + 1))
 
