@@ -1,15 +1,16 @@
 import gym
 import numpy as np
+from plot import simple_plot
 
 from rocket_agent import Agent
 
 env = gym.make('LunarLander-v2')
 n_actions = env.action_space.n
 agent = Agent(gamma=0.99, epsilon=1.0, batch_size=64, n_actions=n_actions, eps_end=0.01, input_dims=[8], lr=0.003)
-scores, eps_history = [], []
+scores, avg_scores, eps_history = [], [], []
 epochs = 500
 
-for i_episode in range(epochs):
+for epoch in range(epochs):
     score = 0
     done = False
     state_old = env.reset()
@@ -26,6 +27,9 @@ for i_episode in range(epochs):
     scores.append(score)
     eps_history.append(agent.epsilon)
     avg_score = np.mean(scores[-100:])
-    print(score)
+    avg_scores.append(avg_score)
+
+    print("epoch: ", epoch, "score: %.2f " % score, "avg_score: %.2f " % avg_score, "epsilon: %.2f" % agent.epsilon)
+    simple_plot(scores, avg_scores, epoch)
 
 env.close()
