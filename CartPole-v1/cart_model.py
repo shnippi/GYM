@@ -10,6 +10,8 @@ class Linear_QNet(nn.Module):
         super().__init__()
         self.linear1 = nn.Linear(input_size, hidden_size)
         self.linear2 = nn.Linear(hidden_size, output_size)
+        self.device = "cuda" if torch.cuda.is_available() else "cpu"
+        self.to(self.device)
 
     def forward(self, x):
         x = F.relu(self.linear1(x))
@@ -61,9 +63,6 @@ class QTrainer:
 
             target[idx][torch.argmax(action[idx]).item()] = Q_new
 
-        # 2: Q_new = r + y * max(next_predicted Q value) -> only do this if done == False
-        # pred.clone()
-        # preds[argmax(action)] = Q_new
         self.optimizer.zero_grad()
         loss = self.criterion(target, pred)
         loss.backward()
