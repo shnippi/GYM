@@ -5,8 +5,10 @@ from plot import simple_plot
 from rocket_agent import Agent
 
 env = gym.make('LunarLander-v2')
+input_dims = len(env.reset())  # how many elements does the state representation have?
 n_actions = env.action_space.n
-agent = Agent(gamma=0.99, epsilon=1.0, batch_size=64, n_actions=n_actions, eps_end=0.01, input_dims=[8], lr=0.003)
+agent = Agent(gamma=0.99, epsilon=1.0, batch_size=64, n_actions=n_actions, eps_end=0.01, input_dims=[input_dims],
+              lr=0.003)
 scores, avg_scores, eps_history = [], [], []
 epochs = 500
 
@@ -14,6 +16,7 @@ for epoch in range(epochs):
     score = 0
     done = False
     state_old = env.reset()
+    # print(state_old[0].type)
     while not done:  # iterating over every timestep (state)
         env.render()
         action = agent.choose_action(state_old)
