@@ -10,7 +10,6 @@ load_dotenv()
 device = os.environ.get('DEVICE') if T.cuda.is_available() else "cpu"
 
 
-
 class DeepQNetwork(nn.Module):
     def __init__(self, lr, input_dims, fc1_dims, fc2_dims,
                  n_actions):

@@ -45,7 +45,7 @@ class Agent():
     def choose_action(self, observation):
         if np.random.random() > self.epsilon:
             state = T.tensor([observation]).float().to(self.Q_eval.device)
-            actions = self.Q_eval.forward(state)
+            actions = self.Q_eval(state)
             action = T.argmax(actions).item()
         else:
             action = np.random.choice(self.action_space)
@@ -60,7 +60,7 @@ class Agent():
 
         max_mem = min(self.mem_cntr, self.mem_size)
 
-        batch = np.random.choice(max_mem, self.batch_size, replace=False)
+        batch = np.random.choice(max_mem, self.batch_size, replace=False)  # no duplicates indexes
 
         batch_index = np.arange(self.batch_size, dtype=np.int32)
 
@@ -70,11 +70,12 @@ class Agent():
         reward_batch = T.tensor(self.reward_memory[batch]).to(self.Q_eval.device)
         terminal_batch = T.tensor(self.terminal_memory[batch]).to(self.Q_eval.device)
 
-        q_eval = self.Q_eval.forward(state_batch)[batch_index, action_batch]
-        q_next = self.Q_eval.forward(new_state_batch)
+        # get the q value of every sample of the action played
+        q_eval = self.Q_eval(state_batch)[batch_index, action_batch]
+        q_next = self.Q_eval(new_state_batch)
         q_next[terminal_batch] = 0.0
 
-        q_target = reward_batch + self.gamma * T.max(q_next, dim=1)[0]
+        q_target = reward_batch + self.gamma * T.max(q_next, dim=1)[0]  # take max q value for every sample
 
         loss = self.Q_eval.loss(q_target, q_eval).to(self.Q_eval.device)
         loss.backward()
