@@ -1,7 +1,14 @@
 import torch as T
+import os
 import torch.nn as nn
 import torch.nn.functional as F
 import torch.optim as optim
+from dotenv import load_dotenv
+
+load_dotenv()
+
+device = os.environ.get('DEVICE') if T.cuda.is_available() else "cpu"
+
 
 
 class DeepQNetwork(nn.Module):
@@ -18,7 +25,7 @@ class DeepQNetwork(nn.Module):
 
         self.optimizer = optim.Adam(self.parameters(), lr=lr)
         self.loss = nn.MSELoss()
-        self.device = T.device('cuda:0' if T.cuda.is_available() else 'cpu')
+        self.device = device
         self.to(self.device)
 
     def forward(self, state):

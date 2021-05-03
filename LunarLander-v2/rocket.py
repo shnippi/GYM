@@ -1,7 +1,6 @@
 import gym
 import numpy as np
 from plot import simple_plot
-
 from rocket_agent import Agent
 
 env = gym.make('LunarLander-v2')
@@ -18,7 +17,7 @@ for epoch in range(epochs):
     state_old = env.reset()
     # print(state_old[0].type)
     while not done:  # iterating over every timestep (state)
-        env.render()
+        # env.render()
         action = agent.choose_action(state_old)
         state_new, reward, done, info = env.step(action)
         score += reward
