@@ -1,17 +1,17 @@
 import gym
 import numpy as np
 from lunar_agent import Agent
-from plot import *
+# from plot import *
 
 if __name__ == '__main__':
     env = gym.make('LunarLanderContinuous-v2')
     agent = Agent(alpha=0.0001, beta=0.001,
-                    input_dims=env.observation_space.shape, tau=0.001,
-                    batch_size=64, fc1_dims=400, fc2_dims=300,
-                    n_actions=env.action_space.shape[0])
-    n_games = 2
+                  input_dims=env.observation_space.shape, tau=0.001,
+                  batch_size=64, fc1_dims=400, fc2_dims=300,
+                  n_actions=env.action_space.shape[0])
+    n_games = 1000
     filename = 'LunarLander_alpha_' + str(agent.alpha) + '_beta_' + \
-                str(agent.beta) + '_' + str(n_games) + '_games'
+               str(agent.beta) + '_' + str(n_games) + '_games'
     figure_file = 'plots/' + filename + '.png'
 
     best_score = env.reward_range[0]
@@ -37,6 +37,6 @@ if __name__ == '__main__':
             agent.save_models()
 
         print('episode ', i, 'score %.1f' % score,
-                'average score %.1f' % avg_score)
-    x = [i+1 for i in range(n_games)]
-    plot_learning_curve(x, score_history, figure_file)
+              'average score %.1f' % avg_score)
+    x = [i + 1 for i in range(n_games)]
+    # plot_learning_curve(x, score_history, figure_file)
