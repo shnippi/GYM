@@ -13,7 +13,7 @@ load_dotenv()
 # says how good it was to take action A in state S
 class CriticNetwork(nn.Module):
     def __init__(self, beta, input_dims, fc1_dims, fc2_dims, n_actions, name,
-                 chkpt_dir='tmp/ddpg'):
+                 chkpt_dir='./models'):
         super(CriticNetwork, self).__init__()
         self.input_dims = input_dims
         self.fc1_dims = fc1_dims
@@ -21,7 +21,8 @@ class CriticNetwork(nn.Module):
         self.n_actions = n_actions
         self.name = name
         self.checkpoint_dir = chkpt_dir
-        self.checkpoint_file = os.path.join(self.checkpoint_dir, name + '_ddpg')
+        self.checkpoint_file = os.path.join(self.checkpoint_dir, name + '_ddpg.pth')
+        print(self.checkpoint_file)
 
         self.fc1 = nn.Linear(*self.input_dims, self.fc1_dims)
         self.fc2 = nn.Linear(self.fc1_dims, self.fc2_dims)
@@ -85,13 +86,13 @@ class CriticNetwork(nn.Module):
 
     def save_best(self):
         print('... saving best checkpoint ...')
-        checkpoint_file = os.path.join(self.checkpoint_dir, self.name + '_best')
+        checkpoint_file = os.path.join(self.checkpoint_dir, self.name + '_best.pth')
         T.save(self.state_dict(), checkpoint_file)
 
 
 class ActorNetwork(nn.Module):
     def __init__(self, alpha, input_dims, fc1_dims, fc2_dims, n_actions, name,
-                 chkpt_dir='tmp/ddpg'):
+                 chkpt_dir='./models'):
         super(ActorNetwork, self).__init__()
         self.input_dims = input_dims
         self.fc1_dims = fc1_dims
@@ -99,7 +100,7 @@ class ActorNetwork(nn.Module):
         self.n_actions = n_actions
         self.name = name
         self.checkpoint_dir = chkpt_dir
-        self.checkpoint_file = os.path.join(self.checkpoint_dir, name + '_ddpg')
+        self.checkpoint_file = os.path.join(self.checkpoint_dir, name + '_ddpg.pth')
 
         self.fc1 = nn.Linear(*self.input_dims, self.fc1_dims)
         self.fc2 = nn.Linear(self.fc1_dims, self.fc2_dims)
@@ -143,6 +144,8 @@ class ActorNetwork(nn.Module):
     def save_checkpoint(self):
         print('... saving checkpoint ...')
 
+        if not os.path.exists('./models'):
+            os.makedirs('./models')
         T.save(self.state_dict(), self.checkpoint_file)
 
     def load_checkpoint(self):
@@ -151,5 +154,5 @@ class ActorNetwork(nn.Module):
 
     def save_best(self):
         print('... saving best checkpoint ...')
-        checkpoint_file = os.path.join(self.checkpoint_dir, self.name + '_best')
+        checkpoint_file = os.path.join(self.checkpoint_dir, self.name + '_best.pth')
         T.save(self.state_dict(), checkpoint_file)
