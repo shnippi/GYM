@@ -7,6 +7,8 @@ import matplotlib.pyplot as plt
 from collections import namedtuple
 from itertools import count
 from PIL import Image
+import os
+from dotenv import load_dotenv
 
 import torch
 import torch.nn as nn
@@ -16,6 +18,8 @@ import torchvision.transforms as T
 
 from cart_conv_replay_memory import ReplayMemory
 from cart_conv_model import DQN
+
+load_dotenv()
 
 env = gym.make('CartPole-v0').unwrapped
 
@@ -28,7 +32,7 @@ if is_ipython:
 plt.ion()
 
 # if gpu is to be used
-device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+device = os.environ.get('DEVICE') if torch.cuda.is_available() else "cpu"
 
 Transition = namedtuple('Transition',
                         ('state', 'action', 'next_state', 'reward'))

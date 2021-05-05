@@ -3,6 +3,9 @@ import torch.nn as nn
 import torch.optim as optim
 import torch.nn.functional as F
 import os
+from dotenv import load_dotenv
+
+load_dotenv()
 
 
 class Linear_QNet(nn.Module):
@@ -10,7 +13,7 @@ class Linear_QNet(nn.Module):
         super().__init__()
         self.linear1 = nn.Linear(input_size, hidden_size)
         self.linear2 = nn.Linear(hidden_size, output_size)
-        self.device = "cuda" if torch.cuda.is_available() else "cpu"
+        self.device = os.environ.get('DEVICE') if torch.cuda.is_available() else "cpu"
         self.to(self.device)
 
     def forward(self, x):
@@ -29,7 +32,7 @@ class Linear_QNet(nn.Module):
 
 class QTrainer:
     def __init__(self, model, lr, gamma):
-        self.device = "cuda" if torch.cuda.is_available() else "cpu"
+        self.device = os.environ.get('DEVICE') if torch.cuda.is_available() else "cpu"
         self.lr = lr
         self.gamma = gamma
         self.model = model

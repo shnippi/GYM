@@ -3,9 +3,13 @@ import random
 import numpy as np
 from collections import deque
 from cart_model import Linear_QNet, QTrainer
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
 
 # Get cpu or gpu device for training.
-device = "cuda" if torch.cuda.is_available() else "cpu"
+device = os.environ.get('DEVICE') if torch.cuda.is_available() else "cpu"
 print("Using {} device".format(device))
 
 MAX_MEMORY = 100_000

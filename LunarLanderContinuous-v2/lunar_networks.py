@@ -4,6 +4,9 @@ import torch as T
 import torch.nn as nn
 import torch.nn.functional as F
 import torch.optim as optim
+from dotenv import load_dotenv
+
+load_dotenv()
 
 
 # Q function approximator
@@ -51,7 +54,7 @@ class CriticNetwork(nn.Module):
 
         self.optimizer = optim.Adam(self.parameters(), lr=beta,
                                     weight_decay=0.01)
-        self.device = T.device('cuda:0' if T.cuda.is_available() else 'cpu')
+        self.device = os.environ.get('DEVICE') if T.cuda.is_available() else "cpu"
 
         self.to(self.device)
 
@@ -122,7 +125,7 @@ class ActorNetwork(nn.Module):
         self.mu.bias.data.uniform_(-f3, f3)
 
         self.optimizer = optim.Adam(self.parameters(), lr=alpha)
-        self.device = T.device('cuda:0' if T.cuda.is_available() else 'cpu')
+        self.device = T.device(os.environ.get('DEVICE') if T.cuda.is_available() else "cpu")
 
         self.to(self.device)
 
