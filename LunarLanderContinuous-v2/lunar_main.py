@@ -1,9 +1,17 @@
 import gym
 import numpy as np
+import torch
 from lunar_agent import Agent
 # from plot import *
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
 
 if __name__ == '__main__':
+    device = os.environ.get('DEVICE') if torch.cuda.is_available() else "cpu"
+    print(print("Using {} device".format(device)))
+
     env = gym.make('LunarLanderContinuous-v2')
     agent = Agent(alpha=0.0001, beta=0.001,
                   input_dims=env.observation_space.shape, tau=0.001,
