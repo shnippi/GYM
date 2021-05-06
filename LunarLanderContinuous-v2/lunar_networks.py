@@ -78,6 +78,9 @@ class CriticNetwork(nn.Module):
 
     def save_checkpoint(self):
         print('... saving checkpoint ...')
+
+        if not os.path.exists('./models'):
+            os.makedirs('./models')
         T.save(self.state_dict(), self.checkpoint_file)
 
     def load_checkpoint(self):
@@ -92,6 +95,7 @@ class CriticNetwork(nn.Module):
 
 # policy approximator
 # decides what action to use in current state
+# OUTPUTS AN ACTION
 class ActorNetwork(nn.Module):
     def __init__(self, alpha, input_dims, fc1_dims, fc2_dims, n_actions, name,
                  chkpt_dir='./models'):
