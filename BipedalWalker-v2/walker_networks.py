@@ -32,6 +32,7 @@ class CriticNetwork(nn.Module):
         self.to(self.device)
 
     def forward(self, state, action):
+        # dim = 1 since dim = 0 is the batch dimension
         q1_action_value = self.fc1(T.cat([state, action], dim=1))
         q1_action_value = F.relu(q1_action_value)
         q1_action_value = self.fc2(q1_action_value)

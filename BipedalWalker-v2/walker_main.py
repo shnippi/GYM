@@ -1,3 +1,5 @@
+# THIS IS TD3
+
 import gym
 import numpy as np
 from walker_agent import Agent
