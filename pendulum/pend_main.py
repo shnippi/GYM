@@ -7,7 +7,6 @@
 # os.environ['CUDA_VISIBLE_DEVICES'] = '1'
 import pybullet_envs
 import gym
-import numpy as np
 from pend_agent import Agent
 from plot import plot_learning_curve
 import numpy as np
