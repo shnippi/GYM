@@ -47,13 +47,13 @@ class Agent():
 
     def choose_action(self, observation):
         if self.time_step < self.warmup:
-            mu = T.tensor(np.random.normal(scale=self.noise, size=(self.n_actions,)))
+            mu = T.tensor(np.random.normal(scale=self.noise, size=(self.n_actions,))).to(self.actor.device)
         else:
             state = T.tensor(observation, dtype=T.float).to(self.actor.device)
             mu = self.actor.forward(state).to(self.actor.device)
         mu_prime = mu + T.tensor(np.random.normal(scale=self.noise),
                 dtype=T.float).to(self.actor.device)
-        mu_prime = T.clamp(mu_prime, self.min_action[0], self.max_action[0])
+        mu_prime = T.clamp(mu_prime, self.min_action[0], self.max_action[0]).to(self.actor.device)
         self.time_step += 1
         return mu_prime.cpu().detach().numpy()
 

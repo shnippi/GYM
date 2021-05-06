@@ -1,7 +1,7 @@
 import gym
 import numpy as np
 from walker_agent import Agent
-# from plot import plot_learning_curve
+from plot import plot_learning_curve
 
 if __name__ == '__main__':
     env = gym.make('BipedalWalker-v3')
@@ -24,6 +24,9 @@ if __name__ == '__main__':
         done = False
         score = 0
         while not done:
+            if score > 100:
+                env.render()
+
             action = agent.choose_action(observation)
             observation_, reward, done, info = env.step(action)
             agent.remember(observation, action, reward, observation_, done)
@@ -41,4 +44,4 @@ if __name__ == '__main__':
                 'trailing 100 games avg %.3f' % avg_score)
 
     x = [i+1 for i in range(n_games)]
-    # plot_learning_curve(x, score_history, figure_file)
+    plot_learning_curve(x, score_history, figure_file)
