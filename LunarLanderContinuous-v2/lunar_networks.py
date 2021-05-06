@@ -58,6 +58,7 @@ class CriticNetwork(nn.Module):
 
         self.to(self.device)
 
+    # TODO: shorten this
     def forward(self, state, action):
         state_value = self.fc1(state)
         state_value = self.bn1(state_value)
@@ -89,6 +90,8 @@ class CriticNetwork(nn.Module):
         T.save(self.state_dict(), checkpoint_file)
 
 
+# policy approximator
+# decides what action to use in current state
 class ActorNetwork(nn.Module):
     def __init__(self, alpha, input_dims, fc1_dims, fc2_dims, n_actions, name,
                  chkpt_dir='./models'):
@@ -112,6 +115,7 @@ class ActorNetwork(nn.Module):
 
         self.mu = nn.Linear(self.fc2_dims, self.n_actions)
 
+        # compute the fan-ins for weight initialisation (see DDPG paper)
         f2 = 1. / np.sqrt(self.fc2.weight.data.size()[0])
         self.fc2.weight.data.uniform_(-f2, f2)
         self.fc2.bias.data.uniform_(-f2, f2)
@@ -129,6 +133,7 @@ class ActorNetwork(nn.Module):
 
         self.to(self.device)
 
+    # TODO: shorten this
     def forward(self, state):
         x = self.fc1(state)
         x = self.bn1(x)
@@ -136,6 +141,8 @@ class ActorNetwork(nn.Module):
         x = self.fc2(x)
         x = self.bn2(x)
         x = F.relu(x)
+        # we use tanh since lunar lander has action space [-1,1]
+        # for other environments with different action spaces just multiply the output
         x = T.tanh(self.mu(x))
 
         return x

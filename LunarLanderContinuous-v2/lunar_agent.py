@@ -76,12 +76,16 @@ class Agent():
         critic_value_ = self.target_critic.forward(states_, target_actions)
         critic_value = self.critic.forward(states, actions)
 
+        # set Q value of terminal states to 0 (since there will be no future reward)
         critic_value_[done] = 0.0
-        # TODO: why?
+        # make a list of all critic values (previously it was list of lists)
         critic_value_ = critic_value_.view(-1)
 
+        # y =  r + Q'( s(i+1), U'(s(i+1))
+        # --> target = reward + The Q-value (given by target critic) of the action (given by target actor)
+        # of the new state
         target = rewards + self.gamma * critic_value_
-        # TODO: why? --> add batch dimension
+        # add batch dimension
         target = target.view(self.batch_size, 1)
 
         self.critic.optimizer.zero_grad()
@@ -90,12 +94,14 @@ class Agent():
         self.critic.optimizer.step()
 
         self.actor.optimizer.zero_grad()
-        # TODO: WHY MINUS?
+        # actor loss : mean of the gradient of the Q value of the action the actor would take
+        # minus because gradient ASCENT
         actor_loss = -self.critic.forward(states, self.actor.forward(states))
         actor_loss = T.mean(actor_loss)
         actor_loss.backward()
         self.actor.optimizer.step()
 
+        # soft update the target networks in direction of current networks
         self.update_network_parameters()
 
     def update_network_parameters(self, tau=None):

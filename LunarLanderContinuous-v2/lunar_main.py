@@ -6,6 +6,10 @@ from lunar_agent import Agent
 import os
 from dotenv import load_dotenv
 
+# Action is two real values vector from -1 to +1. First controls main engine, -1...0 off, 0...+1
+# throttle from 50% to 100% power. Engine can't work with less than 50% power. Second value -1.0..-0.5 fire left engine,
+# +0.5..+1.0 fire right engine, -0.5..0.5 off.
+
 load_dotenv()
 
 if __name__ == '__main__':
