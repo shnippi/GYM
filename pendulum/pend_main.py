@@ -54,7 +54,7 @@ if __name__ == '__main__':
         if avg_score > best_score:
             best_score = avg_score
             # if not load_checkpoint:
-            #     agent.save_models()
+            agent.save_models()
 
         print('episode ', i, 'score %.1f' % score,
               'trailing 100 games avg %.1f' % avg_score,

@@ -5,10 +5,14 @@ import torch.nn.functional as F
 import torch.optim as optim
 from torch.distributions.normal import Normal
 import numpy as np
+from dotenv import load_dotenv
+
+load_dotenv()
+
 
 class CriticNetwork(nn.Module):
     def __init__(self, beta, input_dims, fc1_dims, fc2_dims, n_actions,
-            name, chkpt_dir='tmp/sac'):
+                 name, chkpt_dir='./models'):
         super(CriticNetwork, self).__init__()
         self.input_dims = input_dims
         self.fc1_dims = fc1_dims
@@ -16,7 +20,7 @@ class CriticNetwork(nn.Module):
         self.n_actions = n_actions
         self.name = name
         self.checkpoint_dir = chkpt_dir
-        self.checkpoint_file = os.path.join(self.checkpoint_dir, name+'_sac')
+        self.checkpoint_file = os.path.join(self.checkpoint_dir, name + '_sac')
 
         # I think this breaks if the env has a 2D state representation
         self.fc1 = nn.Linear(self.input_dims[0] + n_actions, self.fc1_dims)
@@ -24,7 +28,7 @@ class CriticNetwork(nn.Module):
         self.q1 = nn.Linear(self.fc2_dims, 1)
 
         self.optimizer = optim.Adam(self.parameters(), lr=beta)
-        self.device = T.device('cuda:0' if T.cuda.is_available() else 'cpu')
+        self.device = T.device(os.environ.get('DEVICE') if T.cuda.is_available() else "cpu")
 
         self.to(self.device)
 
@@ -39,14 +43,17 @@ class CriticNetwork(nn.Module):
         return q1
 
     def save_checkpoint(self):
+        if not os.path.exists('./models'):
+            os.makedirs('./models')
         T.save(self.state_dict(), self.checkpoint_file)
 
     def load_checkpoint(self):
         self.load_state_dict(T.load(self.checkpoint_file))
 
+
 class ActorNetwork(nn.Module):
     def __init__(self, alpha, input_dims, fc1_dims, fc2_dims, max_action,
-            n_actions, name, chkpt_dir='tmp/sac'):
+                 n_actions, name, chkpt_dir='./models'):
         super(ActorNetwork, self).__init__()
         self.input_dims = input_dims
         self.fc1_dims = fc1_dims
@@ -55,7 +62,7 @@ class ActorNetwork(nn.Module):
         self.name = name
         self.max_action = max_action
         self.checkpoint_dir = chkpt_dir
-        self.checkpoint_file = os.path.join(self.checkpoint_dir, name+'_sac')
+        self.checkpoint_file = os.path.join(self.checkpoint_dir, name + '_sac')
         self.reparam_noise = 1e-6
 
         self.fc1 = nn.Linear(*self.input_dims, self.fc1_dims)
@@ -64,7 +71,7 @@ class ActorNetwork(nn.Module):
         self.sigma = nn.Linear(self.fc2_dims, self.n_actions)
 
         self.optimizer = optim.Adam(self.parameters(), lr=alpha)
-        self.device = T.device('cuda:0' if T.cuda.is_available() else 'cpu')
+        self.device = T.device(os.environ.get('DEVICE') if T.cuda.is_available() else "cpu")
 
         self.to(self.device)
 
@@ -75,7 +82,7 @@ class ActorNetwork(nn.Module):
         prob = F.relu(prob)
 
         mu = self.mu(prob)
-        #sigma = T.sigmoid(self.sigma(prob))
+        # sigma = T.sigmoid(self.sigma(prob))
         sigma = self.sigma(prob)
         sigma = T.clamp(sigma, min=self.reparam_noise, max=1)
         # authors use -20, 2 -> doesn't seem to work for my implementation
@@ -87,13 +94,13 @@ class ActorNetwork(nn.Module):
         probabilities = T.distributions.Normal(mu, sigma)
 
         if reparameterize:
-            actions = probabilities.rsample() # reparameterizes the policy
+            actions = probabilities.rsample()  # reparameterizes the policy
         else:
             actions = probabilities.sample()
 
-        action = T.tanh(actions)*T.tensor(self.max_action).to(self.device)
+        action = T.tanh(actions) * T.tensor(self.max_action).to(self.device)
         log_probs = probabilities.log_prob(actions)
-        log_probs -= T.log(1-action.pow(2) + self.reparam_noise)
+        log_probs -= T.log(1 - action.pow(2) + self.reparam_noise)
         log_probs = log_probs.sum(1, keepdim=True)
 
         return action, log_probs
@@ -110,40 +117,43 @@ class ActorNetwork(nn.Module):
         probabilities = T.distributions.MultivariateNormal(mu, cov)
 
         if reparameterize:
-            actions = probabilities.rsample() # reparameterizes the policy
+            actions = probabilities.rsample()  # reparameterizes the policy
         else:
             actions = probabilities.sample()
 
-        action = T.tanh(actions) # enforce the action bound for (-1, 1)
+        action = T.tanh(actions)  # enforce the action bound for (-1, 1)
         log_probs = probabilities.log_prob(actions)
-        log_probs -= T.sum(T.log(1-action.pow(2) + self.reparam_noise))
+        log_probs -= T.sum(T.log(1 - action.pow(2) + self.reparam_noise))
         log_probs = log_probs.sum(-1, keepdim=True)
 
         return action, log_probs
 
     def save_checkpoint(self):
+        if not os.path.exists('./models'):
+            os.makedirs('./models')
         T.save(self.state_dict(), self.checkpoint_file)
 
     def load_checkpoint(self):
         self.load_state_dict(T.load(self.checkpoint_file))
 
+
 class ValueNetwork(nn.Module):
     def __init__(self, beta, input_dims, fc1_dims, fc2_dims,
-            name, chkpt_dir='tmp/sac'):
+                 name, chkpt_dir='./models'):
         super(ValueNetwork, self).__init__()
         self.input_dims = input_dims
         self.fc1_dims = fc1_dims
         self.fc2_dims = fc2_dims
         self.name = name
         self.checkpoint_dir = chkpt_dir
-        self.checkpoint_file = os.path.join(self.checkpoint_dir, name+'_sac')
+        self.checkpoint_file = os.path.join(self.checkpoint_dir, name + '_sac')
 
         self.fc1 = nn.Linear(*self.input_dims, self.fc1_dims)
         self.fc2 = nn.Linear(self.fc1_dims, self.fc2_dims)
         self.v = nn.Linear(self.fc2_dims, 1)
 
         self.optimizer = optim.Adam(self.parameters(), lr=beta)
-        self.device = T.device('cuda:0' if T.cuda.is_available() else 'cpu')
+        self.device = T.device(os.environ.get('DEVICE') if T.cuda.is_available() else "cpu")
 
         self.to(self.device)
 
@@ -158,6 +168,8 @@ class ValueNetwork(nn.Module):
         return v
 
     def save_checkpoint(self):
+        if not os.path.exists('./models'):
+            os.makedirs('./models')
         T.save(self.state_dict(), self.checkpoint_file)
 
     def load_checkpoint(self):
