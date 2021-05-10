@@ -33,11 +33,8 @@ class CriticNetwork(nn.Module):
         self.to(self.device)
 
     def forward(self, state, action):
-        q1_action_value = self.fc1(T.cat([state, action], dim=1))
-        q1_action_value = F.relu(q1_action_value)
-        q1_action_value = self.fc2(q1_action_value)
-        q1_action_value = F.relu(q1_action_value)
-
+        q1_action_value = F.relu(self.fc1(T.cat([state, action], dim=1)))
+        q1_action_value = F.relu(self.fc2(q1_action_value))
         q1 = self.q1(q1_action_value)
 
         return q1
@@ -76,10 +73,8 @@ class ActorNetwork(nn.Module):
         self.to(self.device)
 
     def forward(self, state):
-        prob = self.fc1(state)
-        prob = F.relu(prob)
-        prob = self.fc2(prob)
-        prob = F.relu(prob)
+        prob = F.relu(self.fc1(state))
+        prob = F.relu(self.fc2(prob))
 
         mu = self.mu(prob)
         # sigma = T.sigmoid(self.sigma(prob))
@@ -99,6 +94,7 @@ class ActorNetwork(nn.Module):
             actions = probabilities.sample()
 
         action = T.tanh(actions) * T.tensor(self.max_action).to(self.device)
+
         log_probs = probabilities.log_prob(actions)
         log_probs -= T.log(1 - action.pow(2) + self.reparam_noise)
         log_probs = log_probs.sum(1, keepdim=True)

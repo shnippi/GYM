@@ -18,6 +18,8 @@ if __name__ == '__main__':
     env_id = 'InvertedPendulumBulletEnv-v0'
     # env_id = 'CartPoleContinuousBulletEnv-v0'
     env = gym.make(env_id)
+    env.render()
+    env.reset()
     agent = Agent(alpha=0.0003, beta=0.0003, reward_scale=2, env_id=env_id,
                   input_dims=env.observation_space.shape, tau=0.005,
                   env=env, batch_size=256, layer1_size=256, layer2_size=256,
