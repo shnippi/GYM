@@ -6,12 +6,13 @@ from td3_agent import Agent
 from plot import plot_learning_curve
 
 if __name__ == '__main__':
-    env = gym.make('BipedalWalker-v3')
-    #env = gym.make('LunarLanderContinuous-v2')
+    env_id = 'BipedalWalker-v3'
+    # env = gym.make('LunarLanderContinuous-v2')
+    env = gym.make(env_id)
     agent = Agent(alpha=0.001, beta=0.001,
-                input_dims=env.observation_space.shape, tau=0.005,
-                env=env, batch_size=100, layer1_size=400, layer2_size=300,
-                n_actions=env.action_space.shape[0])
+                  input_dims=env.observation_space.shape, tau=0.005,
+                  env=env, env_id=env_id, batch_size=100, layer1_size=400, layer2_size=300,
+                  n_actions=env.action_space.shape[0])
     n_games = 1500
     filename = 'Walker2d_' + str(n_games) + '_2.png'
     figure_file = 'plots/' + filename
@@ -19,7 +20,7 @@ if __name__ == '__main__':
     best_score = env.reward_range[0]
     score_history = []
 
-    #agent.load_models()
+    # agent.load_models()
 
     for i in range(n_games):
         observation = env.reset()
@@ -40,10 +41,10 @@ if __name__ == '__main__':
 
         if avg_score > best_score:
             best_score = avg_score
-            # agent.save_models()
+            agent.save_models()
 
         print('episode ', i, 'score %.2f' % score,
-                'trailing 100 games avg %.3f' % avg_score)
+              'trailing 100 games avg %.3f' % avg_score)
 
-    x = [i+1 for i in range(n_games)]
+    x = [i + 1 for i in range(n_games)]
     plot_learning_curve(x, score_history, figure_file)

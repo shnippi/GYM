@@ -8,7 +8,7 @@ from ddpg_buffer import ReplayBuffer
 
 
 class Agent():
-    def __init__(self, alpha, beta, input_dims, tau, n_actions, gamma=0.99,
+    def __init__(self, alpha, beta, input_dims, tau, env_id, n_actions, gamma=0.99,
                  max_size=1000000, fc1_dims=400, fc2_dims=300,
                  batch_size=64):
         self.gamma = gamma
@@ -22,15 +22,15 @@ class Agent():
         self.noise = OUActionNoise(mu=np.zeros(n_actions))
 
         self.actor = ActorNetwork(alpha, input_dims, fc1_dims, fc2_dims,
-                                  n_actions=n_actions, name='actor')
+                                  n_actions=n_actions, name=env_id + '_actor')
         self.critic = CriticNetwork(beta, input_dims, fc1_dims, fc2_dims,
-                                    n_actions=n_actions, name='critic')
+                                    n_actions=n_actions, name=env_id + '_critic')
 
         self.target_actor = ActorNetwork(alpha, input_dims, fc1_dims, fc2_dims,
-                                         n_actions=n_actions, name='target_actor')
+                                         n_actions=n_actions, name=env_id + '_target_actor')
 
         self.target_critic = CriticNetwork(beta, input_dims, fc1_dims, fc2_dims,
-                                           n_actions=n_actions, name='target_critic')
+                                           n_actions=n_actions, name=env_id + '_target_critic')
 
         self.update_network_parameters(tau=1)
 

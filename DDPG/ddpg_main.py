@@ -15,12 +15,11 @@ from dotenv import load_dotenv
 load_dotenv()
 
 if __name__ == '__main__':
-    device = os.environ.get('DEVICE') if torch.cuda.is_available() else "cpu"
-    print(print("Using {} device".format(device)))
 
-    env = gym.make('LunarLanderContinuous-v2')
+    env_id = 'LunarLanderContinuous-v2'
+    env = gym.make(env_id)
     agent = Agent(alpha=0.0001, beta=0.001,
-                  input_dims=env.observation_space.shape, tau=0.001,
+                  input_dims=env.observation_space.shape, tau=0.001, env_id=env_id,
                   batch_size=64, fc1_dims=400, fc2_dims=300,
                   n_actions=env.action_space.shape[0])
     n_games = 1000
