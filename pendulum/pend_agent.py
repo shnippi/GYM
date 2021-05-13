@@ -59,6 +59,7 @@ class Agent():
         state = T.tensor(state, dtype=T.float).to(self.critic_1.device)
         action = T.tensor(action, dtype=T.float).to(self.critic_1.device)
 
+        # view(-1) --> collapse along batch dimension
         value = self.value(state).view(-1)
         value_ = self.target_value(state_).view(-1)
         value_[done] = 0.0

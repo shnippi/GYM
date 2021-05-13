@@ -10,6 +10,7 @@ from dotenv import load_dotenv
 load_dotenv()
 
 
+# gets state and action, outputs Q
 class CriticNetwork(nn.Module):
     def __init__(self, beta, input_dims, fc1_dims, fc2_dims, n_actions,
                  name, chkpt_dir='./models'):
@@ -33,6 +34,7 @@ class CriticNetwork(nn.Module):
         self.to(self.device)
 
     def forward(self, state, action):
+        # concatenate along dim1, since dim0 is batch dim
         q1_action_value = F.relu(self.fc1(T.cat([state, action], dim=1)))
         q1_action_value = F.relu(self.fc2(q1_action_value))
         q1 = self.q1(q1_action_value)
@@ -93,6 +95,7 @@ class ActorNetwork(nn.Module):
         else:
             actions = probabilities.sample()
 
+        # enforcing action bounds
         action = T.tanh(actions) * T.tensor(self.max_action).to(self.device)
 
         log_probs = probabilities.log_prob(actions)
@@ -133,6 +136,7 @@ class ActorNetwork(nn.Module):
         self.load_state_dict(T.load(self.checkpoint_file))
 
 
+# yields value for state
 class ValueNetwork(nn.Module):
     def __init__(self, beta, input_dims, fc1_dims, fc2_dims,
                  name, chkpt_dir='./models'):
