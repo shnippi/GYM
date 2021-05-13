@@ -6,8 +6,8 @@ from td3_agent import Agent
 from plot import plot_learning_curve
 
 if __name__ == '__main__':
-    env_id = 'BipedalWalker-v3'
-    # env = gym.make('LunarLanderContinuous-v2')
+    # env_id = 'BipedalWalker-v3'
+    env_id = 'LunarLanderContinuous-v2'
     env = gym.make(env_id)
     agent = Agent(alpha=0.001, beta=0.001,
                   input_dims=env.observation_space.shape, tau=0.005,
@@ -27,8 +27,7 @@ if __name__ == '__main__':
         done = False
         score = 0
         while not done:
-            if score > 100:
-                env.render()
+            # env.render()
 
             action = agent.choose_action(observation)
             observation_, reward, done, info = env.step(action)

@@ -1,6 +1,3 @@
-# SAC
-
-
 # train agents on multiple GPUs. I do this frequently when testing.
 # import os
 # os.environ['CUDA_DEVICE_ORDER'] = 'PCI_BUS_ID'
@@ -17,6 +14,7 @@ if __name__ == '__main__':
     # env_id = 'AntBulletEnv-v0'
     # env_id = 'InvertedPendulumBulletEnv-v0'
     # env_id = 'CartPoleContinuousBulletEnv-v0'
+
     env = gym.make(env_id)
     # env.render()
     # env.reset()
@@ -24,7 +22,7 @@ if __name__ == '__main__':
                   input_dims=env.observation_space.shape, tau=0.005,
                   env=env, batch_size=256, layer1_size=256, layer2_size=256,
                   n_actions=env.action_space.shape[0])
-    n_games = 250
+    n_games = 500
     filename = env_id + '_' + str(n_games) + 'games_scale' + str(agent.scale) + \
                         '_clamp_on_sigma.png'
     figure_file = 'plots/' + filename
@@ -41,7 +39,7 @@ if __name__ == '__main__':
         done = False
         score = 0
         while not done:
-            # env.render()
+            env.render()
             action = agent.choose_action(observation)
             observation_, reward, done, info = env.step(action)
             steps += 1
