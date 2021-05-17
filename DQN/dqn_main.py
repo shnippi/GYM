@@ -1,7 +1,7 @@
 import gym
 import numpy as np
 from plot import simple_plot
-from rocket_agent import Agent
+from dqn_agent import Agent
 
 env = gym.make('LunarLander-v2')
 input_dims = len(env.reset())  # how many elements does the state representation have?
