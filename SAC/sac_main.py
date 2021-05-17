@@ -7,6 +7,10 @@ import gym
 from sac_agent import Agent
 from plot import plot_learning_curve
 import numpy as np
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
 
 if __name__ == '__main__':
     env_id = 'LunarLanderContinuous-v2'
@@ -16,8 +20,11 @@ if __name__ == '__main__':
     # env_id = 'CartPoleContinuousBulletEnv-v0'
 
     env = gym.make(env_id)
-    # env.render()
-    # env.reset()
+
+    # if os.environ.get('RENDER') == "t":
+    #     env.render()
+    #     env.reset()
+
     agent = Agent(alpha=0.0003, beta=0.0003, reward_scale=2, env_id=env_id,
                   input_dims=env.observation_space.shape, tau=0.005,
                   env=env, batch_size=256, layer1_size=256, layer2_size=256,
@@ -32,14 +39,18 @@ if __name__ == '__main__':
     load_checkpoint = False
     if load_checkpoint:
         agent.load_models()
-        env.render(mode='human')
+        if os.environ.get('RENDER') == "t":
+            env.render(mode='human')
+
     steps = 0
     for i in range(n_games):
         observation = env.reset()
         done = False
         score = 0
         while not done:
-            env.render()
+            if os.environ.get('RENDER') == "t":
+                env.render()
+
             action = agent.choose_action(observation)
             observation_, reward, done, info = env.step(action)
             steps += 1
