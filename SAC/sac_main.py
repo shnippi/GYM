@@ -3,6 +3,7 @@
 # os.environ['CUDA_DEVICE_ORDER'] = 'PCI_BUS_ID'
 # os.environ['CUDA_VISIBLE_DEVICES'] = '1'
 import pybullet_envs
+import torch
 import gym
 from sac_agent import Agent
 from plot import plot_learning_curve
@@ -11,6 +12,9 @@ import os
 from dotenv import load_dotenv
 
 load_dotenv()
+
+
+print("Using {} device".format(os.environ.get('DEVICE') if torch.cuda.is_available() else "cpu"))
 
 if __name__ == '__main__':
     env_id = 'LunarLanderContinuous-v2'
