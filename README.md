@@ -1,6 +1,12 @@
-# GYM
-OpenAI GYM Reinforcement learning implementations
-https://gym.openai.com/
+### [OpenAI GYM](https://gym.openai.com/) Reinforcement learning implementations
 
+Implementations of various Deep Reinforcement learning algorithms,
+tested on environments provided by OpenAI
 
-LUNAR LANDER CONTINUOUS V2: episode  347 score 203.8 average score 201.5
+### Leaderboard
+
+> LunarLanderContinuous , 5th place
+
+![](./results/LunarLanderContinuous-v2/DDPGLunarLanderContinuous-v2_500.png)
+![](./results/LunarLanderContinuous-v2/DDPGLunarLanderContinuous-v2_500_terminal.png)
+
