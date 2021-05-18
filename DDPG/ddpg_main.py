@@ -70,14 +70,14 @@ def train():
             best_score = avg_score
             agent.save_models()
 
-        print('episode', i, 'score %.1f' % score,
-              '100 games avg %.1f' % avg_score,
-              'steps %d' % steps, env_id,
+        print(env_id, "|", 'episode', i, "|", 'score %.1f' % score, "|",
+              '100 games avg %.1f' % avg_score, "|",
+              'steps %d' % steps, "|"
               )
 
     if not load_checkpoint:
         x = [i + 1 for i in range(n_games)]
-        plot_learning_curve(x, score_history, figure_file)
+        plot_learning_curve(x, score_history, figure_file, agent.algo, env_id)
 
 
 if __name__ == '__main__':
