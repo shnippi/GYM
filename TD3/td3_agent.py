@@ -10,6 +10,7 @@ class Agent():
                  gamma=0.99, update_actor_interval=2, warmup=1000,
                  n_actions=2, max_size=1000000, layer1_size=400,
                  layer2_size=300, batch_size=100, noise=0.1):
+        self.algo = "TD3"
         self.gamma = gamma
         self.tau = tau
         self.max_action = env.action_space.high
