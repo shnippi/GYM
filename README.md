@@ -1,9 +1,9 @@
-### [OpenAI GYM](https://gym.openai.com/) Reinforcement learning implementations
+# [OpenAI GYM](https://gym.openai.com/) Reinforcement learning implementations
 
 Implementations of various Deep Reinforcement learning algorithms,
 tested on environments provided by OpenAI
 
-### Leaderboard
+## Leaderboard
 
 > LunarLanderContinuous , 5th place
 
