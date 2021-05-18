@@ -10,3 +10,8 @@ tested on environments provided by OpenAI
 ![](./results/LunarLanderContinuous-v2/DDPGLunarLanderContinuous-v2_500.png)
 ![](./results/LunarLanderContinuous-v2/DDPGLunarLanderContinuous-v2_500_terminal.png)
 
+---
+> BipedalWalker-v3 , 2nd place
+
+![](./results/BipedalWalker-v3/TD3_BipedalWalker-v3_1000games.png)
+![](./results/BipedalWalker-v3/TD3_BipedalWalker-v3_1000games_terminal.png)
