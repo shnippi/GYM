@@ -12,35 +12,36 @@ import os
 from dotenv import load_dotenv
 
 load_dotenv()
-
-
 print("Using {} device".format(os.environ.get('DEVICE') if torch.cuda.is_available() else "cpu"))
 
-if __name__ == '__main__':
-    env_id = 'LunarLanderContinuous-v2'
-    # env_id = 'BipedalWalker-v2'
-    # env_id = 'AntBulletEnv-v0'
-    # env_id = 'InvertedPendulumBulletEnv-v0'
-    # env_id = 'CartPoleContinuousBulletEnv-v0'
+# Hyperparams
+n_games = 500
+load_checkpoint = False
 
-    env = gym.make(env_id)
+env_id = 'LunarLanderContinuous-v2'
+# env_id = 'BipedalWalker-v2'
+# env_id = 'AntBulletEnv-v0'
+# env_id = 'InvertedPendulumBulletEnv-v0'
+# env_id = 'CartPoleContinuousBulletEnv-v0'
 
-    # if os.environ.get('RENDER') == "t":
-    #     env.render()
-    #     env.reset()
+env = gym.make(env_id)
+# if os.environ.get('RENDER') == "t":
+#     env.render()
+#     env.reset()
 
-    agent = Agent(alpha=0.0003, beta=0.0003, reward_scale=2, env_id=env_id,
-                  input_dims=env.observation_space.shape, tau=0.005,
-                  env=env, batch_size=256, layer1_size=256, layer2_size=256,
-                  n_actions=env.action_space.shape[0])
-    n_games = 500
-    filename = env_id + '_' + str(n_games) + 'games_scale' + str(agent.scale) + \
-                        '_clamp_on_sigma.png'
+agent = Agent(alpha=0.0003, beta=0.0003, reward_scale=2, env_id=env_id,
+              input_dims=env.observation_space.shape, tau=0.005,
+              env=env, batch_size=256, layer1_size=256, layer2_size=256,
+              n_actions=env.action_space.shape[0])
+
+
+def train():
+    filename = agent.algo + env_id + str(n_games) + '.png'
     figure_file = 'plots/' + filename
 
     best_score = env.reward_range[0]
     score_history = []
-    load_checkpoint = False
+
     if load_checkpoint:
         agent.load_models()
         if os.environ.get('RENDER') == "t":
@@ -51,6 +52,8 @@ if __name__ == '__main__':
         observation = env.reset()
         done = False
         score = 0
+
+        # for every episode:
         while not done:
             if os.environ.get('RENDER') == "t":
                 env.render()
@@ -68,13 +71,17 @@ if __name__ == '__main__':
 
         if avg_score > best_score:
             best_score = avg_score
-            # if not load_checkpoint:
             agent.save_models()
 
-        print('episode ', i, 'score %.1f' % score,
-              'trailing 100 games avg %.1f' % avg_score,
+        print('episode', i, 'score %.1f' % score,
+              '100 games avg %.1f' % avg_score,
               'steps %d' % steps, env_id,
-              ' scale ', agent.scale)
+              )
+
     if not load_checkpoint:
         x = [i + 1 for i in range(n_games)]
         plot_learning_curve(x, score_history, figure_file)
+
+
+if __name__ == '__main__':
+    train()
