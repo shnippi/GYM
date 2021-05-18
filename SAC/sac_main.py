@@ -17,6 +17,7 @@ print("Using {} device".format(os.environ.get('DEVICE') if torch.cuda.is_availab
 # Hyperparams
 n_games = 500
 load_checkpoint = False
+iterations = 3
 
 env_id = 'LunarLanderContinuous-v2'
 # env_id = 'BipedalWalker-v2'
@@ -35,8 +36,8 @@ agent = Agent(alpha=0.0003, beta=0.0003, reward_scale=2, env_id=env_id,
               n_actions=env.action_space.shape[0])
 
 
-def train():
-    filename = agent.algo + env_id + str(n_games) + '.png'
+def train(iteration):
+    filename = agent.algo + "_" + env_id + "_" + str(n_games) + "games" + "_" + str(iteration) + '.png'
     figure_file = 'plots/' + filename
 
     best_score = env.reward_range[0]
@@ -84,4 +85,9 @@ def train():
 
 
 if __name__ == '__main__':
-    train()
+    for iteration in range(iterations):
+        agent = Agent(alpha=0.0003, beta=0.0003, reward_scale=2, env_id=env_id,
+                      input_dims=env.observation_space.shape, tau=0.005,
+                      env=env, batch_size=256, layer1_size=256, layer2_size=256,
+                      n_actions=env.action_space.shape[0])
+        train(iteration + 1)
