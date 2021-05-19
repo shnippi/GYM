@@ -3,7 +3,7 @@
 Implementations of various Deep Reinforcement learning algorithms,
 tested on environments provided by OpenAI
 
-## Leaderboard
+## [Leaderboard](https://github.com/openai/gym/wiki/Leaderboard)
 
 > LunarLanderContinuous , 5th place
 
