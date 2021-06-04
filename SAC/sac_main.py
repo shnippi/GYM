@@ -19,7 +19,8 @@ n_games = 500
 load_checkpoint = False
 iterations = 3
 
-env_id = 'LunarLanderContinuous-v2'
+# env_id = 'LunarLanderContinuous-v2'
+env_id = "MountainCarContinuous-v0"
 # env_id = 'BipedalWalker-v2'
 # env_id = 'AntBulletEnv-v0'
 # env_id = 'InvertedPendulumBulletEnv-v0'
